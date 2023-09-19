@@ -1,0 +1,115 @@
+<mxfile host="65bd71144e">
+    <diagram id="nCKJmoKGXPjYn3vEcTku" name="Page-1">
+        <mxGraphModel dx="3198" dy="2100" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="19" style="edgeStyle=none;html=1;labelBackgroundColor=#666666;strokeColor=#666666;fontColor=#5294CF;fontSize=20;" edge="1" parent="1" source="5" target="10">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#5294CF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=20;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.bucket_with_objects;" vertex="1" parent="1">
+                    <mxGeometry x="599" y="88" width="75" height="78" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="" style="shape=mxgraph.cisco.computers_and_peripherals.speaker;html=1;pointerEvents=1;dashed=0;fillColor=#5294CF;strokeColor=#ffffff;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="173.5" y="-237" width="53" height="94" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=none;html=1;labelBackgroundColor=#666666;strokeColor=#666666;fontColor=#5294CF;fontSize=20;" edge="1" parent="1" source="7" target="9">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="IOT Core" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.aws_iot;fillColor=#5294CF;gradientColor=none;strokeColor=#000000;fontColor=#5294CF;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="334" y="-49" width="67.5" height="81" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=none;html=1;entryX=0.5;entryY=0.91;entryDx=0;entryDy=0;entryPerimeter=0;labelBackgroundColor=#666666;strokeColor=#666666;fontColor=#5294CF;fontSize=20;" edge="1" parent="1" source="9" target="6">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Raspberry Pi" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.hardware_board;fillColor=#5294CF;gradientColor=none;strokeColor=#000000;fontColor=#5294CF;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="158" y="-58.75" width="84" height="100.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;labelBackgroundColor=#666666;strokeColor=#666666;fontColor=#5294CF;fontSize=20;" edge="1" parent="1" source="10" target="16">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.lambda_function;fillColor=#5294CF;gradientColor=none;strokeColor=#000000;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="606.5" y="-40" width="60" height="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#5294CF;shadow=0;dashed=0;shape=mxgraph.ios7.icons.note;pointerEvents=1;fillColor=#5294CF;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="663" y="62" width="29.7" height="29.7" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Actor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;strokeColor=#5294CF;fillColor=#5294CF;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="10" y="-42.75" width="30" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=none;html=1;labelBackgroundColor=#666666;strokeColor=#666666;fontColor=#5294CF;fontSize=20;" edge="1" parent="1" source="16" target="7">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="SQS&amp;nbsp;" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.sqs;fillColor=#5294CF;gradientColor=none;strokeColor=#5294CF;fontColor=#5294CF;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="497" y="-45.499999999999986" width="61" height="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" style="edgeStyle=none;html=1;fontColor=#5294CF;labelBackgroundColor=#666666;strokeColor=#666666;fontSize=20;" edge="1" parent="1" source="17" target="10">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Amazon Polly" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.polly;fillColor=#5294CF;gradientColor=none;strokeColor=#5294CF;fontColor=#5294CF;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="807" y="-46.75" width="65.5" height="76.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;1&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="138" y="28.5" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="**Hardware Setup:**&#10;&#10;1. **Motion Sensor**: Choose a motion sensor that can detect movement and trigger an event when motion is detected. You can find various motion sensors online or at electronics stores. &#10;&#10;2. **Microcontroller**: You'll need a microcontroller (e.g., Raspberry Pi, Arduino) to interface with the motion sensor and play audio files. Connect the motion sensor to the microcontroller's GPIO pins.&#10;&#10;3. **Speaker**: Connect a speaker to the microcontroller to play the audio files. You can use a simple speaker or a small amplifier and speaker combination.&#10;&#10;4. **Power Supply**: Provide power to the microcontroller and speaker. Ensure it's sufficient to power both components.&#10;&#10;5. **Pre-recorded Audio**: Prepare your pre-recorded message and a collection of random Christmas songs. Store these audio files on the microcontroller or an external storage device." style="text;fontSize=20;fontColor=#666666;whiteSpace=wrap;" vertex="1" parent="1">
+                    <mxGeometry x="-396.00074951171877" y="256.0052185058594" width="550" height="387" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;2&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="329" y="-62.75" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;3&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="493" y="-60" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;4&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="626.5" y="-62.75" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;5&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="829.75" y="-74" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;6&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="613" y="62" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;1&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="-424" y="227" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" value="IoT Device Setup**: &#10;&#10;Set up your IoT device (e.g., Raspberry Pi) to listen for incoming audio data from the AWS Lambda function via SQS.&#10;&#10;AWS IoT Core can be used to manage and connect IoT devices securely. You can use it to connect and control your IoT device (e.g., Raspberry Pi) from the cloud, ensuring that the wreath plays audio when motion is detected.&#10;&#10;&#10;&#10;&#10;**AWS IoT Greengrass**:&#10;&#10;   - If you need to process data or run code locally on the IoT device (e.g., audio playback), you can use AWS IoT Greengrass to extend AWS Lambda's capabilities to the edge.&#10;&#10;&#10;**Audio Playback**: Write code on the IoT device to play the received audio using the speaker connected to it." style="text;fontSize=20;fontColor=#666666;labelBackgroundColor=none;whiteSpace=wrap;" vertex="1" parent="1">
+                    <mxGeometry x="261.99986273871536" y="256.0027449544272" width="550" height="79" as="geometry"/>
+                </mxCell>
+                <mxCell id="44" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;2&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="255" y="230" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;3&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="944" y="227" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;4&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="-434" y="1043" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;5&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="245" y="1051" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;6&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="932" y="1043" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="49" value="**Amazon SQS (Simple Queue Service)**:&amp;nbsp;&#10;&#10;&amp;nbsp;Use Amazon SQS to create a message queue that allows your Lambda function to send audio data to your IoT device for playback. This ensures reliable communication between the cloud and the wreath's IoT device." style="text;whiteSpace=wrap;fontSize=20;fontColor=#666666;" vertex="1" parent="1">
+                    <mxGeometry x="955.9958764648437" y="272.9952185058594" width="550" height="97" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="**Amazon Polly + AWS Lambda for Audio Mixing**:&lt;br&gt;&lt;br&gt;&amp;nbsp;You can use AWS Lambda in combination with Amazon Polly to generate audio files for the greeting message and songs, then mix them together into a single audio file that can be played on your IoT device.&lt;br&gt;&lt;br&gt;If your greeting message isn't pre-recorded, you can use Amazon Polly, AWS's text-to-speech service, to convert text into speech. This is useful for generating a personalized greeting message on the fly." style="text;whiteSpace=wrap;fontSize=20;fontColor=#666666;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="251.99587646484372" y="1118.9952185058594" width="550" height="97" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value=" **Amazon S3 (Simple Storage Service)**: &#10;&#10;Use Amazon S3 to store your pre-recorded message and Christmas songs securely in the cloud." style="text;whiteSpace=wrap;fontSize=20;fontColor=#666666;" vertex="1" parent="1">
+                    <mxGeometry x="947.9958764648437" y="1112.9984704589842" width="550" height="97" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="**AWS Lambda Function**:&#10;&#10;Set up an AWS Lambda function to trigger when motion is detected. This Lambda function can perform tasks like retrieving a random Christmas song from Amazon S3, generating a greeting message (if needed) using Amazon Polly, and combining the message and song.&#10;&#10;&#10;   - When triggered by the motion sensor, retrieve a random Christmas song from the S3 bucket.&#10;   - Use an AWS text-to-speech service (e.g., Amazon Polly) to convert your greeting message into audio if it's not pre-recorded.&#10;   - Combine the greeting message and the Christmas song.&#10;   - Use another AWS service like Amazon Simple Queue Service (SQS) to send this audio data to an IoT device." style="text;whiteSpace=wrap;fontSize=20;fontColor=#666666;" vertex="1" parent="1">
+                    <mxGeometry x="-410.0041235351563" y="1121.9952185058594" width="550" height="79" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="IOT Greengrass" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.greengrass;fillColor=#5294CF;gradientColor=none;labelBackgroundColor=none;strokeColor=#5294CF;fontSize=20;fontColor=#5294CF;" vertex="1" parent="1">
+                    <mxGeometry x="329.5" y="91.69999999999999" width="76.5" height="93" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="&lt;font color=&quot;#666666&quot; style=&quot;font-size: 20px;&quot;&gt;2&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Tahoma;spacingBottom=4;spacingRight=2;strokeColor=#d3d3d3;fontColor=#5294CF;fillColor=#FF9933;fontSize=20;" vertex="1" parent="1">
+                    <mxGeometry x="318" y="91.69999999999999" width="20" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
