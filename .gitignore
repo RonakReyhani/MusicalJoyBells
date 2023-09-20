@@ -1,0 +1,13 @@
+# Node
+node_modules
+.webpack
+.DS_Store
+# Local DynamoDB
+.dynamodb
+local-db
+.idea
+.serverless
+coverage
+.npmrc
+# Others
+.history
