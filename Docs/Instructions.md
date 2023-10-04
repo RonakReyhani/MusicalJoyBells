@@ -1,19 +1,33 @@
-### How to connect Raspberry to internet:
+# How to build your Musical Joy Bell
 
-Wired Connection (Ethernet):
-The Raspberry Pi 2 Model B has an Ethernet port, which allows you to connect it directly to your router or network switch using an Ethernet cable (LAN cable). Follow these steps:
-Connect one end of an Ethernet cable to the Ethernet port on your Raspberry Pi 2 Model B.
-Connect the other end of the Ethernet cable to an available port on your router or network switch.
-Power up your Raspberry Pi.
+![workflow](../workflow.png)
+
+## Hardware
+
+### What you need
+
+- Raspberry PI 2 Model B
+- Charger 5V
+- Motion Detector
+-
+-
+
+### Connect Raspberry to internet:
+
+**Wired Connection (Ethernet)**
+The Raspberry Pi 2 Model B has an Ethernet port, which allows you to connect it directly to your router or network switch using an Ethernet cable (LAN cable).
+
+**Follow these steps**
+
+- Connect one end of an Ethernet cable to the Ethernet port on your Raspberry Pi 2 Model B.
+- Connect the other end of the Ethernet cable to an available port on your router or network switch.
+- Power up your Raspberry Pi.
+
 The Raspberry Pi should automatically detect the wired network connection, and you should have internet access.
 
-### Power for Raspberry
+### Connect to Raspberry PI
 
-a charger
-
-### Connect to PI
-
-### Register PI in AWS IOT
+####1- Register PI in AWS IOT
 
 - Turn on your device and make sure it's connected to the internet.
 - Choose how you want to load files onto your device.
@@ -26,13 +40,9 @@ a charger
   ping XXXXXXXXX-ats.iot.ap-southeast-2.amazonaws.com
   After you complete these steps and get a successful ping response, you're ready to continue and connect your device to AWS IoT.
 
-### Raspberry to talk to AWS
+####2- Raspberry to talk to AWS
 
-Set a rules for MQTT topic
-
-### Workflow
-
-![workflow](./workflow.png)
+Set rules for MQTT topic:
 
 - Rule with SNS Action to send notification to SNS topic to text the host: "Your guests are here"
 
@@ -43,7 +53,7 @@ Set a rules for MQTT topic
 
 ### AWS Resources:
 
-- Lambda on edge device that publishes two messages to MQTT topic when diagnoses a motion.
+- Lambda on edge device that publishes two messages. One to MQTT topic when diagnoses a motion. and another one to notify the host with text message.
 
 ```py
 import RPi.GPIO as GPIO

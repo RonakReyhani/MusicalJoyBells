@@ -1,0 +1,74 @@
+service: musical-joy-bell
+
+plugins:
+  - serverless-webpack
+  - serverless-prune-plugin
+
+custom:
+  prune:
+    automatic: true
+    number: 3
+  var:
+    MOBILE_NUMBER: ${self:custom.vars.default.MOBILE_NUMBER}
+    BUCKET_NAME: ${self:custom.vars.default.BUCKET_NAME}
+
+  vars:
+    default:
+      MOBILE_NUMBER: 0451804299
+      BUCKET_NAME: xmas-musical-joy-bell
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-southeast-2
+  timeout: 30
+  tracing:
+    lambda: true
+  iamManagedPolicies:
+    - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+
+  IamRole:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:ListBucket
+            - s3:ListObject
+          Resource:
+            - arn:aws:s3:::${self:custom.var.BUCKET_NAME}
+            - arn:aws:s3:::${self:custom.var.BUCKET_NAME}/*
+
+functions:
+
+resources:
+  Resources:
+    MusicJoyBellBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: Private
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        BucketName: ${self:custom.var.BUCKET_NAME}
+
+    GuestNotifierSNS:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: guestNotifierSMSService
+        SignatureVersion: String
+        TopicName: guest-notifier-topic
+
+    QuestNotifierSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: GuestNotifierSNS
+        Protocol: sms
+        Endpoint: ${self:custom.var.MOBILE_NUMBER}
+
+    MusicQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: "musics-queue"
