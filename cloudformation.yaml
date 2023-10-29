@@ -1,0 +1,182 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Musical Joy cloudformation Stack'
+Parameters:
+  ApplicationName:
+    Description: Name of the application deploying for the Social Media Analytics
+    Type: String
+    Default: ChristmasMusicalJoy
+  PhoneNumber:
+    Description: Phone Number used for SNS notification whenever guests are found in video
+    Type: String
+
+Resources:
+  # Amazon Data Stream
+  ChristmasMusicalJoyDataStream:
+    Type: "AWS::Kinesis::Stream"
+    Properties: 
+      Name: !Sub ${ApplicationName}-Data-Stream
+      ShardCount: 1
+  # Amazon Video Stream
+  ChristmasMusicalJoyVideoStream:
+    Type: AWS::KinesisVideo::Stream
+    Properties:
+      DataRetentionInHours: 24
+      Name: !Sub ${ApplicationName}-Video-Stream
+  # SNS Topic
+  SNSTopic:
+    Type: "AWS::SNS::Topic"
+    Properties: 
+      DisplayName: !Sub ${ApplicationName} SNS Topic
+      Subscription:
+        -
+          Endpoint: !Sub ${PhoneNumber}
+          Protocol: sms
+        -
+          Endpoint: !GetAtt PlayChristmasSongInAlexa.Arn
+          Protocol: lambda
+
+  # Lambda to get the Video Analysis result from Data Stream
+  GetVideoAnalysisLambda: 
+    Type: "AWS::Lambda::Function"
+    Properties: 
+      Environment:
+        Variables:
+          sns: !Ref SNSTopic
+      Code: "src/Handlers/GetVideoAnalysis.handler"
+      Role: !GetAtt GetVideoAnalysisLambdaRole.Arn
+      Runtime: "nodejs18.x"
+      Timeout: "900"
+
+  GetVideoAnalysisLambdaKinesisMapping:
+    Type: "AWS::Lambda::EventSourceMapping"
+    Properties: 
+      BatchSize: 10
+      Enabled: true
+      EventSourceArn: !GetAtt ChristmasMusicalJoyDataStream.Arn
+      FunctionName: !GetAtt  GetVideoAnalysisLambda.Arn
+      StartingPosition: "TRIM_HORIZON"
+
+  # Lambda to play the Christmas song on Alexa
+  PlayChristmasSongLambda: 
+    Type: "AWS::Lambda::Function"
+    Properties: 
+      Environment:
+      Code: "src/Handlers/PlayChristmasSong.handler"
+      Role: !GetAtt PlayChristmasSongLambdaRole.Arn
+      Runtime: "nodejs18.x"
+      Timeout: "900"
+  # -----------------------------IAM-------------------------------------#
+  # Get Video Analysis Lambda Role
+  GetVideoAnalysisLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: '/'
+      Policies:
+        -
+          PolicyName: lambda-comprehend-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                    - 'sns:Publish'
+                Resource: !Ref SNSTopic
+              -
+                Effect: Allow
+                Action:
+                    - 'kinesis:GetRecords'
+                    - 'kinesis:GetShardIterator'
+                    - 'kinesis:DescribeStream'
+                    - 'kinesis:ListStreams'
+                Resource: !GetAtt ChristmasMusicalJoyDataStream.Arn
+              -
+                Effect: Allow
+                Action:
+                    - 'kinesis:ListStreams'
+                Resource: '*'
+
+  # Play Christmas Song Lambda Role
+  PlayChristmasSongLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: '/'
+      Policies:
+        -
+          PolicyName: PlayChristmasSongLambdaRole-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                    - 'alexa:SkillMessaging.SubmitMessage'
+                    - 'alexa:SkillMessaging'
+                Resource: '*'
+
+  # Rekognition Iam Role
+  RekognitionVideoIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service: rekognition.amazonaws.com
+            Action: sts:AssumeRole
+      Path: '/'
+      Policies:
+        -
+          PolicyName: RekognitionVideoIAMRole-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                    - 'kinesis:PutRecord'
+                    - 'kinesis:PutRecords'
+                Resource: !GetAtt ChristmasMusicalJoyDataStream.Arn
+              -
+                Effect: Allow
+                Action:
+                    - 'kinesisvideo:GetDataEndpoint'
+                    - 'kinesisvideo:GetMedia'
+                Resource: !GetAtt ChristmasMusicalJoyVideoStream.Arn
+              -
+                Effect: Allow
+                Action:
+                    - 'rekognition:*'
+                Resource: '*'
+
+  # -----------------------------Outputs-------------------------------------#
+Outputs:
+  KinesisDataStreamArn:
+    Description: Kinesis Data Stream Arn (used in Stream Processor Input)
+    Value: !GetAtt ChristmasMusicalJoyDataStream.Arn
+
+  ChristmasMusicalJoyVideoStreamArn:
+    Description: Kinesis Video Stream Arn (used in Stream Processor Input)
+    Value: !GetAtt ChristmasMusicalJoyVideoStream.Arn
+
+  RekognitionVideoIAMRole:
+    Description: Rekognition Video Processing IAM Arn (used in Stream Processor Input)
+    Value: !GetAtt RekognitionVideoIAMRole.Arn

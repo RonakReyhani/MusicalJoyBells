@@ -10,6 +10,11 @@
   "dependencies": {
     "@aws-sdk/client-iot-data-plane": "^3.421.0",
     "@aws-sdk/client-s3": "^3.421.0",
-    "@aws-sdk/client-sqs": "^3.421.0"
+    "@aws-sdk/client-sns": "^3.438.0",
+    "@aws-sdk/client-sqs": "^3.421.0",
+    "ask-sdk": "^2.14.0",
+    "install": "^0.13.0",
+    "npm": "^10.2.1",
+    "play-sound": "^1.1.6"
   }
 }
