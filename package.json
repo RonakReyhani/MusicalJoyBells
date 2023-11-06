@@ -3,18 +3,32 @@
   "version": "1.0.0",
   "description": "Experience the magic of the holiday season with \"Musical Joy Bells\" This enchanting project brings the joy of Christmas to your guests through the gift of music and heartfelt greetings.",
   "scripts": {
-    "test": "npm run test:ci"
+    "test": "npm run test:ci",
+    "build": "NODE_OPTIONS='--max-old-space-size=14336' webpack",
+    "package": "sh ./scripts/package.sh"
   },
   "author": "Nadia Reyhani",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-iot-data-plane": "^3.421.0",
+    "@aws-sdk/client-rekognition": "^3.441.0",
     "@aws-sdk/client-s3": "^3.421.0",
+    "@aws-sdk/client-secrets-manager": "^3.441.0",
     "@aws-sdk/client-sns": "^3.438.0",
     "@aws-sdk/client-sqs": "^3.421.0",
+    "@aws-sdk/s3-request-presigner": "^3.441.0",
     "ask-sdk": "^2.14.0",
+    "aws-lambda": "^1.0.7",
+    "form-data": "^4.0.0",
     "install": "^0.13.0",
+    "node-fetch": "^3.3.2",
     "npm": "^10.2.1",
-    "play-sound": "^1.1.6"
+    "play-sound": "^1.1.6",
+    "ts-loader": "^9.5.0",
+    "ts-node": "^10.9.1",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.125"
   }
 }

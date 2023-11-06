@@ -5,11 +5,57 @@ Parameters:
     Description: Name of the application deploying for the Social Media Analytics
     Type: String
     Default: ChristmasMusicalJoy
-  PhoneNumber:
-    Description: Phone Number used for SNS notification whenever guests are found in video
+  ChristmasJoyAudioBucketName:
+    Description: Audio bucket name
+    Type: String
+    Default: christmas-joy-audio-bucket
+  ChristmasJoyFaceCollectionBucketName:
+    Description: face collection image bucket name
+    Type: String
+    Default: christmas-joy-face-collection-bucket
+  ChristmasJoyFaceCollectionId:
+    Description: face collection Id
+    Type: String
+    Default: christmas-joy-face-collection-Id
+  TelegramBotSecretName:
+    Description: name of the Telegram Secret
+    Type: String
+    Default: telegram-bot-token
+  TelegramBotToken:
+    Description: API Token for Telegram Bot
     Type: String
 
 Resources:
+##----------- SECRETS MANAGER--------------------------------##
+TelegramBotTokenSecret:
+  Type: AWS::SecretsManager::Secret
+  Properties:
+    Name: !Ref TelegramBotSecretName
+    Description: My sample secret description
+    GenerateSecretString:
+      SecretStringTemplate: !Sub '{"apiKey": "${TelegramBotToken}"}'
+
+##----------- S3 STORAGE--------------------------------##
+  ChristmasJoyAudioBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      BucketName: !Ref ChristmasJoyAudioBucketName
+
+  ChristmasJoyFaceCollectionBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      BucketName: !Ref ChristmasJoyFaceCollectionBucketName
+##----------- AMAZON KINESIS RESOURCES -----------------##
   # Amazon Data Stream
   ChristmasMusicalJoyDataStream:
     Type: "AWS::Kinesis::Stream"
@@ -22,29 +68,49 @@ Resources:
     Properties:
       DataRetentionInHours: 24
       Name: !Sub ${ApplicationName}-Video-Stream
-  # SNS Topic
+
+##----------- REKOGNITION RESOURCES -----------------##
+  RekognitionFaceCollection:
+    Type: AWS::Rekognition::Collection
+    Properties:
+      CollectionId: !Ref ChristmasJoyFaceCollectionId
+
+  RekognitionStreamProcessor:
+    Type: AWS::Rekognition::StreamProcessor
+    Properties:
+      RoleArn: !GetAtt RekognitionVideoIAMRole.Arn
+      KinesisVideoStream:
+        Arn: !GetAtt ChristmasMusicalJoyDataStream.Arn
+      FaceSearchSettings:
+        CollectionId: !Ref ChristmasJoyFaceCollectionId
+        FaceMatchThreshold: 98
+      KinesisDataStream:
+        Arn: !GetAtt ChristmasMusicalJoyVideoStream.Arn
+
+##----------- EVENT MESSAGING SERVICES -----------------##
   SNSTopic:
     Type: "AWS::SNS::Topic"
     Properties: 
-      DisplayName: !Sub ${ApplicationName} SNS Topic
+      DisplayName: !Sub ${ApplicationName}-SNS-Topic
       Subscription:
         -
-          Endpoint: !Sub ${PhoneNumber}
-          Protocol: sms
-        -
-          Endpoint: !GetAtt PlayChristmasSongInAlexa.Arn
+          Endpoint: !GetAtt InformHostLambda.Arn
           Protocol: lambda
 
-  # Lambda to get the Video Analysis result from Data Stream
+##----------- LAMBDA RESOURCES -----------------##
+
   GetVideoAnalysisLambda: 
     Type: "AWS::Lambda::Function"
     Properties: 
+      Code: ./.build/GetVideoAnalysis.zip
+      FunctionName: GetVideoAnalysisLambda
+      Handler: src/GetVideoAnalysis.handler
+      Role: !GetAtt GetVideoAnalysisLambdaRole.Arn
       Environment:
         Variables:
-          sns: !Ref SNSTopic
-      Code: "src/Handlers/GetVideoAnalysis.handler"
-      Role: !GetAtt GetVideoAnalysisLambdaRole.Arn
+          SNS_TOPIC: !Ref SNSTopic
       Runtime: "nodejs18.x"
+      MemorySize: 1024
       Timeout: "900"
 
   GetVideoAnalysisLambdaKinesisMapping:
@@ -56,17 +122,30 @@ Resources:
       FunctionName: !GetAtt  GetVideoAnalysisLambda.Arn
       StartingPosition: "TRIM_HORIZON"
 
-  # Lambda to play the Christmas song on Alexa
-  PlayChristmasSongLambda: 
+  InformHostLambda: 
     Type: "AWS::Lambda::Function"
     Properties: 
+      Code: .build/InformHost.zip
+      FunctionName: InformHostLambda
+      Handler: src/InformHost.handler
+      Role: !GetAtt InformHostLambdaRole.Arn
       Environment:
-      Code: "src/Handlers/PlayChristmasSong.handler"
-      Role: !GetAtt PlayChristmasSongLambdaRole.Arn
+        Variables:
+          BUCKET_NAME: !Ref ChristmasJoyAudioBucketName
+          SECRET_NAME: !Ref TelegramBotSecretName
       Runtime: "nodejs18.x"
+      MemorySize: 1024
       Timeout: "900"
-  # -----------------------------IAM-------------------------------------#
-  # Get Video Analysis Lambda Role
+
+  InformHostLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt InformHostLambda.Arn
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref SNSTopic
+
+## -----------------------------IAM-------------------------------------##
   GetVideoAnalysisLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -81,7 +160,7 @@ Resources:
       Path: '/'
       Policies:
         -
-          PolicyName: lambda-comprehend-policy
+          PolicyName: GetVideoAnalysisLambda-policy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -98,14 +177,8 @@ Resources:
                     - 'kinesis:DescribeStream'
                     - 'kinesis:ListStreams'
                 Resource: !GetAtt ChristmasMusicalJoyDataStream.Arn
-              -
-                Effect: Allow
-                Action:
-                    - 'kinesis:ListStreams'
-                Resource: '*'
 
-  # Play Christmas Song Lambda Role
-  PlayChristmasSongLambdaRole:
+  InformHostLambdaRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -119,18 +192,24 @@ Resources:
       Path: '/'
       Policies:
         -
-          PolicyName: PlayChristmasSongLambdaRole-policy
+          PolicyName: InformHostLambdaRole-policy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               -
                 Effect: Allow
                 Action:
-                    - 'alexa:SkillMessaging.SubmitMessage'
-                    - 'alexa:SkillMessaging'
-                Resource: '*'
+                    - "secretsmanager:ListSecrets",
+                    - "secretsmanager:GetSecretValue"
+                Resource: !Ref TelegramBotTokenSecret
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub "arn:aws:s3:::${ChristmasJoyAudioBucket}/*"
+                  - !Sub "arn:aws:s3:::${ChristmasJoyAudioBucket}"
 
-  # Rekognition Iam Role
   RekognitionVideoIAMRole:
     Type: AWS::IAM::Role
     Properties:
@@ -167,6 +246,56 @@ Resources:
                     - 'rekognition:*'
                 Resource: '*'
 
+##----------- LAMBDA LOG GROUPS -----------------------------------------##
+  GetVideoAnalysisLambdaLogGroup: 
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: "/aws/lambda/GetVideoAnalysisLambda"
+      RetentionInDays: 7
+
+  GetVideoAnalysisLambdaLogPermissions:
+    Type: AWS::IAM::Policy
+    Properties:
+      Roles:
+      - !Ref GetVideoAnalysisLambdaRole
+      PolicyName: "GetVideoAnalysisLambdaLogGroup-policy"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource:
+            - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${GetVideoAnalysisLambdaLogGroup}"
+            - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${GetVideoAnalysisLambdaLogGroup}:*"
+            - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${GetVideoAnalysisLambdaLogGroup}:log-stream:*"
+
+  InformHostLambdaLogGroup: 
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: "/aws/lambda/InformHostLambda"
+      RetentionInDays: 7
+
+  InformHostLambdaLogPermissions:
+    Type: AWS::IAM::Policy
+    Properties:
+      Roles:
+      - !Ref InformHostLambdaRole
+      PolicyName: !Sub "InformHostLambdaLogGroup-policy"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource:
+            - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${InformHostLambdaLogGroup}"
+            - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${InformHostLambdaLogGroup}:*"
+            - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${InformHostLambdaLogGroup}:log-stream:*"
   # -----------------------------Outputs-------------------------------------#
 Outputs:
   KinesisDataStreamArn:

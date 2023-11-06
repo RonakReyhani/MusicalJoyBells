@@ -1,5 +1,4 @@
 export interface IMusicalJoy {
-  detectAndNotifyMe(): Promise<any>;
-  playMusic(): Promise<any>;
-  getRandomMusic(): Promise<void>;
+  getVideoAnalysis(record:{ kinesis: { data: string }}): Promise<{ statusCode: number; body: string; }>;
+  informHost(visitors: string): Promise<void>;
 }

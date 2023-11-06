@@ -11,3 +11,9 @@ coverage
 .npmrc
 # Others
 .history
+OnlyForMe.md
+.build
+scripts/auto-deploy.sh
+notCommit/**
+TODO_LIST.md
+./Docs/**
