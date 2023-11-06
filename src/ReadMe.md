@@ -1,4 +1,4 @@
-## Home Security Hacks: Mixing The Right Ingredients On AWS For A Fun Christmas
+## Home Security Hacks: Mixing The Right Ingredients On AWS For A Musical Christmas Joy
 
 In the world of GenAI applications, we often overlook the amazing tools provided by cloud service providers like AWS for exploring Machine Learning.
 
@@ -12,65 +12,88 @@ Great! We now have the idea, let's call it "Christmas Musical Joy".
 
 ### Recipe for Christmas Musical Joy
 
-- 1 IP Camera
+- 1 IP Camera (with RTSP support)
 - 1 Amazon Kinesis Video Stream
 - A pinch of Amazon Rekognition
 - 1 Amazon Kinesis Data Stream
-- 1 AWS Lambda Function
+- AWS Lambda Function as many as you need
 - 1 Amazon SNS Topic
 - A dash of IAM Roles and Access Policies
 
 ### Guided Tour of the Diagram
 
-Understanding the essential cake ingredients is just the beginning; it's the art of blending them that gives each cake its unique flavor. Similarly, now that we have the recipe for crafting our Christmas Musical Joy tool, let's dive into the intricacies of the designed architecture and follow the instructions to bring it to life.
+Understanding the essential cake ingredients is just the beginning; it's the art of blending them that gives each cake its unique flavor. Similarly, now that we have the recipe for crafting our Christmas Musical Joy tool, let's dive into the designed architecture and follow the instructions to bring it to life.
 
 ![architecture diagram](../architecture/architecture.png)
 
-In our tech recipe, the key ingredient is an IP camera. While numerous approaches exist for this project, I opted for the one readily available to me. I chose to utilize an IP camera (Tapo C310) because it supports RTSP (Real-Time Streaming Protocol). But why RTSP, you ask? It's essential for streaming the captured video from the camera and seamlessly feeding it into a Stream Service delivery, such as Amazon Kinesis Video Streams.
+In our tech recipe, the key ingredient is an IP camera. While numerous approaches exist for this project, I opted for the one that is available to me. I chose to utilize an IP camera (Tapo C310) because it supports RTSP (Real-Time Streaming Protocol). But why RTSP, you ask? It's essential for streaming the captured video from the camera and seamlessly feeding it into a Stream Service delivery, such as Amazon Kinesis Video Streams.
 
-With our real-time video stream successfully ingested into Kinesis Video Streams, you might be wondering, "What's next?" How does this tool recognize my visitors, and which tools help us achieve that? These are valid questions, but we've got the answers. All it takes is Amazon Rekognition Stream Producer and Face Collection.
 
-Once the Live Video Data reaches Amazon Rekognition, it diligently combs through a collection of images from various individuals. As soon as it spots a match, the results are streamed out. But we can't stop there; we need another delivery tool to seamlessly convey the analysis results from Amazon Rekognition to a destination like an AWS Lambda function. For this purpose, I've enlisted the assistance of Amazon Kinesis Data Streams.
+### Setting up The Camera
 
-Once the face matching result arrives at the AWS Lambda function, the possibilities are endless. We have the freedom to utilize it in whichever way we desire – whether that means sending a joyful text message to notify us of our guest's arrival, complete with our visitor's name, or even treating them to a delightful Christmas song while they wait for our warm welcome at the entrance.
+#### Get the IP address of the camera 
+Simply login to your Network router and find your Device IP.
 
-### Instruction To Mix The Ingredients  
+#### Create Camera Account
+Any type of IP camera you choose, they usually have an application to enable users to interact with the camera, for my Tapo C310 camera, I Set up the TP-Link App and created a camera account. This credential is used with Amazon Kinesis Video Stream's Client for authentication. This is something different from your TP-Link App account, if you do not provide these credentials KVS will fail to get the stream from Camera. if you are using the same camera as mine [here is the instruction](https://www.tp-link.com/us/support/faq/2790/) on how to create your camera account.
 
-Instead of following the typical left-to-right approach from the guided diagram, building this tool requires us to start from the top and move downwards, left to right. While some manual setup steps are necessary to create the resources, I've used the Infrastructure As Code (IAC) approach for other resource creation that are required for this project.
+### Create AWS Resources With Cloudformation
+
+#### Amazon Kinesis Resources
+// Add more content
+
+ As soon as it finds a match, the results are streamed out from Amazon Rekognition. But we it doesn't stop there; We need another delivery system to seamlessly deliver the analysis results from Amazon Rekognition to a destination like an AWS Lambda function. For this purpose 
 
 Please note that Amazon Kinesis Video Streams (KVS) availability is limited in certain regions. To optimize performance and ensure support for the KVS service, it's essential to deploy the stack in a region that is both geographically close to you and a supported region for KVS.
 
-__Resources provided in cloudformation.yml (in this repo)[].__
-
-### Amazon Kinesis Resources
-
-- Create Kinesis Video Stream && Amazon Kinesis Data stream:
-
 ```
-//cloudformation.yml
-
-# Amazon Kinesis Data Stream
+  # Amazon Data Stream
   ChristmasMusicalJoyDataStream:
     Type: "AWS::Kinesis::Stream"
     Properties: 
-      Name: christmas-musical-joy-Data-Stream
+      Name: !Sub ${ApplicationName}-Data-Stream
       ShardCount: 1
-# Amazon Kinesis Video Stream
+  # Amazon Video Stream
   ChristmasMusicalJoyVideoStream:
     Type: AWS::KinesisVideo::Stream
     Properties:
       DataRetentionInHours: 24
-      Name: christmas-musical-joy-Video-Stream
+      Name: !Sub ${ApplicationName}-Video-Stream
 
 ```
 
-### Rekognition Iam Role
+#### Amazon Rekognition Resources
+
+##### Rekognition Stream Processor
+With our real-time video stream successfully ingested into Kinesis Video Streams from camera, you might be wondering "How does this tool recognize my visitors?", or "Which services help us achieve that?". These are valid questions, but we've got the answers. All we need is "Amazon Rekognition Stream Producer" and a "Face Collection".
+
+Once the Live Video Data reaches Amazon Rekognition, it searches through a collection of images from various individuals.
+
+```
+  RekognitionFaceCollection:
+    Type: AWS::Rekognition::Collection
+    Properties:
+      CollectionId: !Ref ChristmasJoyFaceCollectionId
+
+  RekognitionStreamProcessor:
+    Type: AWS::Rekognition::StreamProcessor
+    Properties:
+      Name: "ChristmasMusicalJoyStreamProcessor"
+      RoleArn: !GetAtt RekognitionVideoIAMRole.Arn
+      KinesisVideoStream: 
+        Arn: !GetAtt ChristmasMusicalJoyVideoStream.Arn
+      FaceSearchSettings:
+        CollectionId: !Ref ChristmasJoyFaceCollectionId
+        FaceMatchThreshold: 98
+      KinesisDataStream: 
+        Arn: !GetAtt ChristmasMusicalJoyDataStream.Arn
+
+```
+##### Rekognition Iam Role
   - We need an IAM role for Amazon Rekognition service that allows Rekognition to get the Video Data stream from Amazon Kinesis Video Streams service and put the Facial Match Records into Amazon Kinesis Data Stream, for that we need a policy like this:
-__Provided in cloudformation.yaml__
 
-  ```
-//cloudformation.yml
 
+```
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -94,36 +117,17 @@ __Provided in cloudformation.yaml__
 }
 ```
 
-### S3 Bucket To Store The audios & Face Samples
-``` 
-//cloudformation.yml
 
-ChristmasAudioBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      AccessControl: Private
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      BucketName: <YOUR_BUCKET_NAME>
-      
-```
+### Create Joy From Amazon Rekognition Analysis
 
-### Create Face collection (Manual Step AWS CLI)
-This is a manual step, you need to have set up your AWS CLI and configured your credentials to be able to run this command successfully. 
-
-- Create Face collection:
-We need to provide the known faces as a collection to Amazon Rekognition so that on live stream it can analyse and find the matches. 
-
-```  
-    aws rekognition create-collection \
-        --collection-id <FACE_COLLECTION_NAME> \
-        --region <AWS_REGION>
-```
+Once the face matching result arrives at the AWS Lambda function, the possibilities are endless. We have the freedom to utilize it in whichever way we desire – whether that means sending a joyful text message to notify us of our guest's arrival, complete with our visitor's name, or even treating them to a delightful Christmas song while they wait for our warm welcome at the entrance.
 
 
-- Add face to face collection:
+### Configure Face collection (AWS CLI)
+
+We need to provide the known faces as a collection to Amazon Rekognition so that on live stream it can analyse and find the matches. within previous steps collection was create, to add known faces to the collection we can do it through AWS CLI. This is a manual step, you need to have set up your AWS CLI and configured your credentials to be able to run this command successfully. 
+
+##### Add face to face collection:
 
 I have stored the face examples which are just simple photos with`.jpg` format in a S3 Bucket. 
 
@@ -139,39 +143,9 @@ I have stored the face examples which are just simple photos with`.jpg` format i
 
 ```
 
-- To get a list of your collection, you can run the following command: 
-
-```    
-    aws rekognition list-faces \
-        --collection-id <COLLECTION_ID>
-```
-
-
-### Rekognition Stream Producer (Manual Step AWS CLI)
-
-- Set up the Rekognition Video Stream Processor:
+### Start Rekognition Stream Producer (AWS CLI)
 
 This is the heart of the system. It pulls video from Kinesis video, analyzes it & pushes the results to Kinesis data. 
-
-```
-aws rekognition create-stream-processor \
-    --name PROCESSOR_NAME \
-    --role-arn IM_ROLE_ARN \
-    --settings '{"FaceSearch":{"CollectionId":"FACE_COLLECTION_ID"}}' \
-    --input '{"KinesisVideoStream":{"Arn":"KINESIS_VIDEO_STREAM_ARN"}}' \
-    --stream-processor-output '{"KinesisDataStream":{"Arn":"KINESIS_DATA_STREAM_ARN"}}'
-
-```
-```
-output:
-
-{
-    "SessionId": "e9c078f3-ba26-41a3-9c19-6d08444e504c"
-}
-
-```
-
-__Some Useful Commands__:
 
 - List Rekognition Stream Producer:
 
@@ -201,13 +175,7 @@ aws rekognition start-stream-processor \
     --name <PROCESSOR_NAME>
 
 ```
-- List Rekognition Stream Producer:
-
-Now, with listing the Stream Producers we see the Status has changed to "RUNNING".
-
-```
-aws rekognition list-stream-processors
-```
+After starting the Stream Producer the status will change to "Running"
 
 ```
 {
@@ -220,18 +188,6 @@ aws rekognition list-stream-processors
 }
 
 ```
-
-### Camera Streaming to Kinesis (Manual Step- CLI)
-
-Let's review how much progress we made, So far we created resources that helps us deliver the video stream, including Kinesis Video and Kinesis Data Stream, Amazon Rekognition Stream producer and the permissions it requires to be able to get the stream records from KVS. It was simple and straightforward, Now it's time to enable the Ip Camera to stream the live video data into KVS. 
-
-For that, we have to follow these few steps:
-
-#### Get the IP address of the camera 
-Simply login to your Network router and find your Device IP.
-
-#### Set up Camera Account
-Any type of IP camera you choose, they usually have an application to enable users to interact with the camera, for my Tapo C310 camera, I Set up the TP-Link App and created a camera account. This credential is used with Amazon Kinesis Video Stream's Client for authentication. This is something different from your TP-Link App account, if you do not provide these credentials KVS will fail to get the stream from Camera. if you are using the same camera as mine [here is the instruction](https://www.tp-link.com/us/support/faq/2790/) on how to create your camera account.
 
 
 #### Connect the Camera as a stream source (Producer) for Kinesis Video Stream.
@@ -250,6 +206,7 @@ This seems to be very complex but thanks to Docker we can build the entire envir
         docker run -it <YOU_IMAGE_ID>
 
 ```
+
 #### Run the gstreamer sample app with the requisite arguments
 
 In your running docker execute the following command
@@ -270,6 +227,7 @@ AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY> \
 
 Simply follow instruction from (this web page)[https://sendpulse.com/knowledge-base/chatbot/telegram/create-telegram-chatbot], I am storing my API Token in Amazon Secrets Manager Service to get the secret in my (InformHost)[####] Lambda Function to send the visitors names and the music file to my telegram bot.
 
+
 ### Deploy Resources as Infrastructure as Code
 We still need other resources like lambda functions to get the stream record from Amazon Kinesis Data stream, Amazon SNS Topic and so on. go ahead and continue with build, package and deploying the resources.
 
@@ -277,31 +235,20 @@ We still need other resources like lambda functions to get the stream record fro
 
 *Remember to start your Chatbot before proceeding with deployment process*
 
+
 #### Build and Package
 ```
 npm run build
 npm run package
-```
 
-### Package Cloudformation Resources (Manual AWS CLI)
-
-```
 aws cloudformation package --template-file ./cloudformation.yaml --s3-bucket $ARTIFACT_BUCKET --output-template-file /<FOLDER>/cloudformation.yaml
 
-```
-#### Deploy Resources (Manual AWS CLI)
-
-```
 aws cloudformation deploy \
   --template /path_to_template/my-template.yml \
   --stack-name <STACK_NAME> \
   --parameter-overrides Key1=Value1 Key2=Value2 \
-
 ```
 
-### Tasting Time
-
-TO DO Short Demo of application
 
 ### Clean up
 After you’ve played with it to your heart’s content, it’s time to destroy it all! Follow these steps:
