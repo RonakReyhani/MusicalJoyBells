@@ -27,13 +27,12 @@ Parameters:
 
 Resources:
 ##----------- SECRETS MANAGER--------------------------------##
-TelegramBotTokenSecret:
-  Type: AWS::SecretsManager::Secret
-  Properties:
-    Name: !Ref TelegramBotSecretName
-    Description: My sample secret description
-    GenerateSecretString:
-      SecretStringTemplate: !Sub '{"apiKey": "${TelegramBotToken}"}'
+  TelegramBotTokenSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Ref TelegramBotSecretName
+      Description: My sample secret description
+      SecretString: !Sub '{"apiKey": "${TelegramBotToken}"}'
 
 ##----------- S3 STORAGE--------------------------------##
   ChristmasJoyAudioBucket:
@@ -79,13 +78,13 @@ TelegramBotTokenSecret:
     Type: AWS::Rekognition::StreamProcessor
     Properties:
       RoleArn: !GetAtt RekognitionVideoIAMRole.Arn
-      KinesisVideoStream:
-        Arn: !GetAtt ChristmasMusicalJoyDataStream.Arn
+      KinesisVideoStream: 
+        Arn: !GetAtt ChristmasMusicalJoyVideoStream.Arn
       FaceSearchSettings:
         CollectionId: !Ref ChristmasJoyFaceCollectionId
         FaceMatchThreshold: 98
-      KinesisDataStream:
-        Arn: !GetAtt ChristmasMusicalJoyVideoStream.Arn
+      KinesisDataStream: 
+        Arn: !GetAtt ChristmasMusicalJoyDataStream.Arn
 
 ##----------- EVENT MESSAGING SERVICES -----------------##
   SNSTopic:
