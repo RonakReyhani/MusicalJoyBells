@@ -77,6 +77,7 @@ Resources:
   RekognitionStreamProcessor:
     Type: AWS::Rekognition::StreamProcessor
     Properties:
+      Name: "ChristmasMusicalJoyStreamProcessor"
       RoleArn: !GetAtt RekognitionVideoIAMRole.Arn
       KinesisVideoStream: 
         Arn: !GetAtt ChristmasMusicalJoyVideoStream.Arn
